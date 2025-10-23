@@ -1,0 +1,21 @@
+# Environnement virtuel
+.venvo/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env
+
+# Database and local data
+db/
+*.db
+
+# MongoDB data directory
+/data/mongodb/
+data/mongodb/
+
+# VS Code
+.vscode/
