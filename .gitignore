@@ -19,3 +19,9 @@ data/mongodb/
 
 # VS Code
 .vscode/
+
+memo.txt
+
+mongodb/
+
+config_mongo.py

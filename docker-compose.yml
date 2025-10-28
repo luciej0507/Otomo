@@ -16,3 +16,15 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongo_otomo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: hobby
+      MONGO_INITDB_ROOT_PASSWORD: hobby
+    volumes:
+      - ./mongodb:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
