@@ -1,6 +1,0 @@
-DB_HOST      = 'localhost'
-DB_ROOT      = 'root'
-DB_ROOT_PASSWORD = 'example'
-DB_NAME      = 'otomo'
-DB_USER      = 'lucie'
-DB_PASSWORD  = 'hobby'
