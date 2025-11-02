@@ -1,5 +1,30 @@
+from dotenv import load_dotenv
+import os
 import re
 import mysql.connector
+
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Connexion MySQL
+DB_HOST = os.getenv("DB_HOST")
+DB_ROOT = os.getenv("DB_ROOT")
+DB_ROOT_PASSWORD = os.getenv("DB_ROOT_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# connexion à la base SQL
+admin_cnx = mysql.connector.connect(
+    host=DB_HOST,
+    user=DB_ROOT,      
+    password=DB_ROOT_PASSWORD,
+    database=DB_NAME
+)
+
+admin_cursor = admin_cnx.cursor()
+
 
 
 ### --- EXTRACTION et TRANSFORMATION ---
@@ -72,16 +97,6 @@ animes = extraire_animes_depuis_txt("../data/notes_perso.txt")
 
 
 ## Récupération des titres et ID depuis la table anime
-# connexion à la base SQL
-admin_cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",      
-    password="example",
-    database="otomo"
-)
-
-admin_cursor = admin_cnx.cursor()
-
 admin_cursor.execute("SELECT id, titre_anglais FROM anime")
 anime_db = admin_cursor.fetchall()
 
@@ -122,6 +137,8 @@ for a in animes_valides:
         INSERT INTO suivi_anime (utilisateur, anime, episodes_vus, statut_suivi)
         VALUES (%s, %s, %s, %s)
     """, (id_utilisateur, a["anime_id"], a["episodes_vus"], a["statut"]))
+
+
 
 # Commit et fermeture
 admin_cnx.commit()

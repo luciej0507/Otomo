@@ -72,6 +72,7 @@ otomo/
 │       ├── auth.py                     # Authentification JWT
 │       ├── database.py                 # Connexion à MySQL
 │       └── main.py                     # Point d'entrée FastAPI
+├── .env.exemple                        # Modèle pour créer variables d'environnement
 ├── docker-compose.yml                  # Déploiement Docker (MySQL, Adminer, MongoDB)
 └── requirement.txt                     # Dépendances Python
 ```
@@ -113,6 +114,9 @@ source .venv/bin/activate
 # Installer les dépendances
 pip install -r requirements.txt
 
+# Définir ces variables d'environnement
+.env.exemple
+
 # Lancer les conteneurs Docker (MySQL, Adminer et MongoDB)
 docker compose up -d
 ```
@@ -120,21 +124,6 @@ docker compose up -d
 ---
 
 ## 5. Création et chargement des bases de données
-
-Les variables de configuration des bases MongoDB et SQL sont stockées dans un fichier .env selon le format suivant :
-```bash
-# Base MySQL
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=motdepasse
-MYSQL_DB=nom_de_la_base
-
-# Base MongoDB
-MONGO_CONNECTION=mongodb://<username>:<password>@localhost:27017/admin
-MONGO_BASE=nom_de_la_base
-MONGO_COLLECTION=nom_de_la_collection
-```
 
 - **Base SQLite**
 ```bash

@@ -1,7 +1,31 @@
+from dotenv import load_dotenv
+import os
 import json
 import re
 import unicodedata
 import mysql.connector
+
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Connexion MySQL
+DB_HOST = os.getenv("DB_HOST")
+DB_ROOT = os.getenv("DB_ROOT")
+DB_ROOT_PASSWORD = os.getenv("DB_ROOT_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# connexion à la base SQL
+admin_cnx = mysql.connector.connect(
+    host=DB_HOST,
+    user=DB_ROOT,      
+    password=DB_ROOT_PASSWORD,
+    database=DB_NAME
+)
+
+admin_cursor = admin_cnx.cursor(dictionary=True, buffered=True)
 
 
 ### --- EXTRACTION ---
@@ -45,16 +69,6 @@ def normalize_title(title):
 
 
 ### --- CHARGEMENT ---
-# connexion à la base SQL
-admin_cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",      
-    password="example",
-    database="otomo"
-)
-
-admin_cursor = admin_cnx.cursor(dictionary=True, buffered=True)
-
 # Table CITATION
 # Trouver l’id de l’anime correspondant à son title
 def get_anime_id(anime_title):
@@ -91,18 +105,13 @@ def insert_citation(quote_text, anime_id, character_id):
 
 # Insertion dans la table 
 for quote in transformed_quotes:
-    anime_title = quote["anime_title"]
-
-    anime_title = normalize_title(anime_title)
+    anime_title = normalize_title(quote["anime_title"])
 
     anime_id = get_anime_id(anime_title)
     if not anime_id:
-        print(f"Anime non trouvé : {anime_title}")
         continue
 
     character_id = get_character_id(quote["character_name"], anime_id)
-    if not character_id:
-        print(f"Perso non trouvé : {quote['character_name']} (Anime: {anime_title})")
         
     insert_citation(
         quote_text=quote["quote_text"],

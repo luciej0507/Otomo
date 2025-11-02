@@ -19,7 +19,11 @@ def get_connection():
             user=DB_ROOT,           
             password=DB_ROOT_PASSWORD,   
             database=DB_NAME,   
-            charset="utf8mb4"
+            charset="utf8mb4",
+            autocommit=False,
+            pool_name="otomo_pool",     # Active le pooling
+            pool_size=5,                # 5 connexions réutilisables
+            pool_reset_session=True     # Nettoie les connexions
         )
         return connection
     except Error as e:

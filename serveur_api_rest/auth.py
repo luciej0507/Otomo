@@ -1,16 +1,20 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from dotenv import load_dotenv
+import os
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import bcrypt
 from serveur_api_rest.crud.utilisateur_crud import get_utilisateur
+
+load_dotenv()
 
 security = HTTPBearer()
 
 # Clé secrète, algorithme pour signer le JWT et durée de validité du token
-SECRET_KEY = "secret_super_sécurisé"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")  # Valeur par défaut si absent
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
 
 # Vérification d'un mot de passe en clair contre un hash
@@ -21,7 +25,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # Création d'un token JWT avec l'id et le rôle
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
