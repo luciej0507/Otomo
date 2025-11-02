@@ -53,8 +53,8 @@ def main():
         # Connexion en tant que nouvel utilisateur sur la DB créée
         user_cnx = mysql.connector.connect(
             host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
+            user=DB_ROOT,
+            password=DB_ROOT_PASSWORD,
             database=DB_NAME
         )
         user_cursor = user_cnx.cursor()

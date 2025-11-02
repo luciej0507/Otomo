@@ -3,7 +3,7 @@ services:
     image: mysql
     container_name: db_dt
     environment:
-      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     ports:
       - 3306:3306
     volumes:
@@ -21,8 +21,8 @@ services:
     image: mongo:7.0
     container_name: mongo_otomo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: hobby
-      MONGO_INITDB_ROOT_PASSWORD: hobby
+      MONGO_INITDB_ROOT_USERNAME: ${MDB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MDB_PASSWORD}
     volumes:
       - ./mongodb:/data/db
     ports:

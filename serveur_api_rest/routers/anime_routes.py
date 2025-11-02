@@ -10,9 +10,8 @@ router = APIRouter(tags=["Animés"])
 @router.get(
     "/",
     response_model=list[AnimeRead],
-    summary="Liste des animés disponibles",
-    description="Retourne tous les animés enregistrés dans la base. Accessible sans authentification."
-)
+    summary="Liste des animés disponibles"
+    )
 def read_all():
     return get_all_animes()
 

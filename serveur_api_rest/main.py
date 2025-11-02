@@ -8,7 +8,6 @@ from serveur_api_rest.routers import (
 
 app = FastAPI()
 
-
 # Inclusion des routes
 app.include_router(auth_routes.router)
 app.include_router(anime_routes.router, prefix="/anime")
@@ -24,8 +23,8 @@ app.include_router(suivi_anime_routes.router, prefix="/suivi")
 app.include_router(suivi_anime_routes_secure.router, prefix="/suivi_secure")
 
 
-# Route racine
-@app.get("/")
+# Route racine (route default masqué)
+@app.get("/", include_in_schema=False)
 def root():
     return {"message": "Bienvenue sur l'API du Projet Otomo"}
 
@@ -36,7 +35,14 @@ def custom_openapi():
     openapi_schema = get_openapi(
         title="API Projet Otomo",
         version="1.0.0",
-        description="Une API pour gérer les données d'anime, personnages, citations, utilisateurs et plus.",
+        description="""
+    Cette API permet de gérer :
+    - Les animés, personnages, studios, genres et citations.
+    - Le suivi des animés pour chaque utilisateur.
+    - Des routes sécurisées nécessitant une authentification.
+    
+    Utiliser le bouton Authorize pour tester les routes protégées.
+    """,
         routes=app.routes,
     )
     openapi_schema["components"]["securitySchemes"] = {
@@ -46,7 +52,6 @@ def custom_openapi():
             "bearerFormat": "JWT"
         }
     }
-    openapi_schema["security"] = [{"HTTPBearer": []}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 

@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 from pymongo import MongoClient
 import pandas as pd
 import requests
@@ -6,10 +8,19 @@ import time
 import random
 from tqdm import tqdm  # pour le suivi visuel
 
+# Charger les variables d'environnement
+load_dotenv()
+
+# Récupération des variables MongoDB
+MDB_CONNECTION = os.getenv("MDB_CONNECTION")
+MDB_BASE = os.getenv("MDB_BASE")
+MDB_COLLECTION_BIS = os.getenv("MDB_COLLECTION_BIS")
+
 # Connexion à la base MongoDB
-client = MongoClient("mongodb://hobby:hobby@localhost:27017/admin")
-db = client["anime"]
-collection = db["characters"]
+client = MongoClient(MDB_CONNECTION)
+db = client[MDB_BASE]
+collection = db[MDB_COLLECTION_BIS]
+
 
 # Chargement du fichier csv
 df = pd.read_csv("anime_jikan_list.csv")

@@ -1,11 +1,40 @@
+from dotenv import load_dotenv
+import os
 from pymongo import MongoClient
 import pandas as pd
 import mysql.connector
 
-# Connexion à MongoDB
-client = MongoClient("mongodb://hobby:hobby@localhost:27017/admin") 
-db = client["anime"]
-collection = db["characters"]
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Connexion MongoDB
+MDB_CONNECTION = os.getenv("MDB_CONNECTION")
+MDB_BASE = os.getenv("MDB_BASE")
+MDB_COLLECTION_BIS = os.getenv("MDB_COLLECTION")
+
+client = MongoClient(MDB_CONNECTION)
+db = client[MDB_BASE]
+collection = db[MDB_COLLECTION_BIS]
+
+
+# Connexion MySQL
+DB_HOST = os.getenv("DB_HOST")
+DB_ROOT = os.getenv("DB_ROOT")
+DB_ROOT_PASSWORD = os.getenv("DB_ROOT_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# connexion à la base SQL
+admin_cnx = mysql.connector.connect(
+    host=DB_HOST,
+    user=DB_ROOT,      
+    password=DB_ROOT_PASSWORD,
+    database=DB_NAME
+)
+
+admin_cursor = admin_cnx.cursor()
 
 
 
@@ -78,16 +107,6 @@ unique_perso = df[["character", "role"]].dropna().drop_duplicates()
 
 
 ### --- CHARGEMENT ---
-## connexion à la base SQL
-admin_cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",      
-    password="example",
-    database="otomo"
-)
-
-admin_cursor = admin_cnx.cursor()
-
 ## Table VOICE_ACTOR
 for row in voice_df.itertuples(index=False):
     nom_va = row.voice_actor
@@ -147,6 +166,7 @@ for _, row in df_merged.iterrows():
         """, (row["personnage_id"], row["voice_actor_id"]))
     except Exception as e:
         print(f"Erreur perso_voice_actor pour {row['character']}: {e}")
+
 
 
 # # Commit et fermeture

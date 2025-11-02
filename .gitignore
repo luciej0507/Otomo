@@ -16,12 +16,17 @@ db/
 # MongoDB data directory
 /data/mongodb/
 data/mongodb/
+mongodb/
 
 # VS Code
 .vscode/
 
+# Dossiers ou fichiers tests ou sauvegarde
 memo.txt
+# sauvegarde de la base SQL complète
+db_otomo.sql
+# exemples de requêtes sql
+requetes.sql
 
-mongodb/
-
+# Variables de configuration
 config_mongo.py

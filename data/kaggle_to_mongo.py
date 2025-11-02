@@ -1,9 +1,18 @@
+from dotenv import load_dotenv
+import os
 import pandas as pd
 from pymongo import MongoClient
-from config_mongo import MDB_CONNECTION, MDB_BASE, MDB_COLLECTION
 
-# Connexion à MongoDB
-client = MongoClient(MDB_CONNECTION) 
+# Charger les variables d'environnement
+load_dotenv()
+
+# Récupération des variables MongoDB
+MDB_CONNECTION = os.getenv("MDB_CONNECTION")
+MDB_BASE = os.getenv("MDB_BASE")
+MDB_COLLECTION = os.getenv("MDB_COLLECTION")
+
+# Connexion à la base MongoDB
+client = MongoClient(MDB_CONNECTION)
 db = client[MDB_BASE]
 collection = db[MDB_COLLECTION]
 
