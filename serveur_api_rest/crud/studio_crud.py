@@ -1,41 +1,33 @@
-from ..database import get_connection
+from ..database import get_db_cursor
 
 ### --- CREATE ---
 def create_studio(data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO studio (studio) VALUES (%s)", (data.nom,))
-    conn.commit()
-    return cursor.lastrowid
+    with get_db_cursor() as cursor:
+        cursor.execute("INSERT INTO studio (studio) VALUES (%s)", (data.nom,))
+        return cursor.lastrowid
 
 
 ### --- READ ---
 def get_studio(studio_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM studio WHERE id = %s", (studio_id,))
-    return cursor.fetchone()
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM studio WHERE id = %s", (studio_id,))
+        return cursor.fetchone()
 
 def get_all_studios():
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM studio")
-    return cursor.fetchall()
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM studio")
+        return cursor.fetchall()
 
 
 ### --- UPDATE ---
 def update_studio(studio_id, data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE studio SET studio = %s WHERE id = %s", (data.nom, studio_id))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        cursor.execute("UPDATE studio SET studio = %s WHERE id = %s", (data.nom, studio_id))
+        return cursor.rowcount > 0
 
 
 ### --- DELETE ---
 def delete_studio(studio_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM studio WHERE id = %s", (studio_id,))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        cursor.execute("DELETE FROM studio WHERE id = %s", (studio_id,))
+        return cursor.rowcount > 0

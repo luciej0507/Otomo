@@ -1,43 +1,35 @@
-from ..database import get_connection
+from ..database import get_db_cursor
 
 ### --- CREATE ---
 def create_citation(data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO citation (citation, anime, personnage) VALUES (%s, %s, %s)",
-                   (data.citation, data.anime, data.personnage))
-    conn.commit()
-    return cursor.lastrowid
+    with get_db_cursor() as cursor:
+        cursor.execute("INSERT INTO citation (citation, anime, personnage) VALUES (%s, %s, %s)",
+                        (data.citation, data.anime, data.personnage))
+        return cursor.lastrowid
 
 
 ### --- READ ---
 def get_citation(citation_id):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM citation WHERE id = %s", (citation_id,))
-    return cursor.fetchone()
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM citation WHERE id = %s", (citation_id,))
+        return cursor.fetchone()
 
 def get_all_citations():
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM citation")
-    return cursor.fetchall()
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM citation")
+        return cursor.fetchall()
 
 
 ### --- UPDATE ---
 def update_citation(citation_id, data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE citation SET citation = %s, anime = %s, personnage = %s WHERE id = %s",
-                   (data.citation, data.anime, data.personnage, citation_id))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        cursor.execute("UPDATE citation SET citation = %s, anime = %s, personnage = %s WHERE id = %s",
+                        (data.citation, data.anime, data.personnage, citation_id))
+        return cursor.rowcount > 0
 
 
 ### --- DELETE ---
 def delete_citation(citation_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM citation WHERE id = %s", (citation_id,))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        cursor.execute("DELETE FROM citation WHERE id = %s", (citation_id,))
+        return cursor.rowcount > 0

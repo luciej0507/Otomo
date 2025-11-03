@@ -1,46 +1,36 @@
-from ..database import get_connection
+from ..database import get_db_cursor
 
 ### --- CREATE ---
 def create_utilisateur(data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    query = "INSERT INTO utilisateur (identifiant, mdp_hashed, role) VALUES (%s, %s, %s)"
-    cursor.execute(query, (data.identifiant, data.mdp_hashed, data.role))
-    conn.commit()
-    return cursor.lastrowid
+    with get_db_cursor() as cursor:
+        query = "INSERT INTO utilisateur (identifiant, mdp_hashed, role) VALUES (%s, %s, %s)"
+        cursor.execute(query, (data.identifiant, data.mdp_hashed, data.role))
+        return cursor.lastrowid
 
 
 ### --- READ ---
 def get_utilisateur(identifiant):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM utilisateur WHERE identifiant = %s", (identifiant,))
-    user = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return user
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM utilisateur WHERE identifiant = %s", (identifiant,))
+        user = cursor.fetchone()
+        return user
 
 def get_all_utilisateurs():
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM utilisateur")
-    return cursor.fetchall()
+    with get_db_cursor(dictionary=True) as cursor:
+        cursor.execute("SELECT * FROM utilisateur")
+        return cursor.fetchall()
 
 
 ### --- UPDATE ---
 def update_utilisateur(id, data):
-    conn = get_connection()
-    cursor = conn.cursor()
-    query = "UPDATE utilisateur SET identifiant=%s, mdp_hashed=%s, role=%s WHERE id=%s"
-    cursor.execute(query, (data.identifiant, data.mdp_hashed, data.role, id))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        query = "UPDATE utilisateur SET identifiant=%s, mdp_hashed=%s, role=%s WHERE id=%s"
+        cursor.execute(query, (data.identifiant, data.mdp_hashed, data.role, id))
+        return cursor.rowcount > 0
 
 
 ### --- DELETE ---
 def delete_utilisateur(identifiant):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM utilisateur WHERE identifiant = %s", (identifiant,))
-    conn.commit()
-    return cursor.rowcount > 0
+    with get_db_cursor() as cursor:
+        cursor.execute("DELETE FROM utilisateur WHERE identifiant = %s", (identifiant,))
+        return cursor.rowcount > 0
