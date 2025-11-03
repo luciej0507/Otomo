@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 import os
+from contextlib import contextmanager
 
 load_dotenv()
 
@@ -22,10 +23,27 @@ def get_connection():
             charset="utf8mb4",
             autocommit=False,
             pool_name="otomo_pool",     # Active le pooling
-            pool_size=5,                # 5 connexions réutilisables
+            pool_size=10,                # 5 connexions réutilisables
             pool_reset_session=True     # Nettoie les connexions
         )
         return connection
     except Error as e:
         print("Erreur de connexion MySQL:", e)
         return None
+
+@contextmanager
+def get_db_cursor(dictionary=False):
+    conn = get_connection()
+    cursor = None
+    try:
+        cursor = conn.cursor(dictionary=dictionary)
+        yield cursor
+        conn.commit()       # Commit automatique
+    except Exception:
+        conn.rollback()     # Annule en cas d'erreur
+        raise
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
