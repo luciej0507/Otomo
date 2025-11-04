@@ -43,18 +43,18 @@ pattern = r'[“"](.*?)[”"]\s*[—-]\s*(.*?),\s*(.*)'
 
 for raw_quote in data["quotes"]:
     match = re.match(pattern, raw_quote)
-    if match:
-        quote_text = match.group(1).strip()
-        character_name = match.group(2).strip()
-        anime_title = match.group(3).strip()
+    if not match:
+        continue
 
-        transformed_quotes.append({
-            "quote_text": quote_text,
-            "character_name": character_name,
-            "anime_title": anime_title
-        })
-    else:
-        print(f"Format inattendu : {raw_quote}")
+    quote_text = match.group(1).strip()
+    character_name = match.group(2).strip()
+    anime_title = match.group(3).strip()
+
+    transformed_quotes.append({
+        "quote_text": quote_text,
+        "character_name": character_name,
+        "anime_title": anime_title
+    })
 
 # Sauvegarde du JSON structuré
 with open("anime_quotes_clean.json", "w", encoding="utf-8") as f:

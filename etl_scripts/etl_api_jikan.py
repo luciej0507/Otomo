@@ -11,7 +11,7 @@ load_dotenv()
 # Connexion MongoDB
 MDB_CONNECTION = os.getenv("MDB_CONNECTION")
 MDB_BASE = os.getenv("MDB_BASE")
-MDB_COLLECTION_BIS = os.getenv("MDB_COLLECTION")
+MDB_COLLECTION_BIS = os.getenv("MDB_COLLECTION_BIS")
 
 client = MongoClient(MDB_CONNECTION)
 db = client[MDB_BASE]

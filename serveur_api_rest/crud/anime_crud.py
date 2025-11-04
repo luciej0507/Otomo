@@ -4,13 +4,13 @@ from ..database import get_db_cursor
 def create_anime(data):
     with get_db_cursor() as cursor:
         query = """
-            INSERT INTO anime (titre_original, titre_anglais, score, nombre_episodes, annee_debut, annee_fin,
-                                nombre_episodes_diffuses, studio, url_image)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO anime (anime_id, titre_original, titre_anglais, score, statut, annee_debut, annee_fin,
+                                nombre_episodes, synopsis, studio, url_image, streaming)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(query, (
-            data.titre_original, data.titre_anglais, data.score, data.nombre_episodes,
-            data.annee_debut, data.annee_fin, data.nombre_episodes_diffuses, data.studio, data.url_image
+            data.anime_id, data.titre_original, data.titre_anglais, data.score, data.statut, data.annee_debut, 
+            data.annee_fin, data.nombre_episodes, data.synopsis, data.studio, data.url_image, data.streaming
         ))
         return cursor.lastrowid
 
@@ -31,14 +31,14 @@ def get_all_animes():
 def update_anime(anime_id, data):
     with get_db_cursor() as cursor:
         query = """
-            UPDATE anime SET titre_original=%s, titre_anglais=%s, score=%s, nombre_episodes=%s,
-            annee_debut=%s, annee_fin=%s, nombre_episodes_diffuses=%s, studio=%s, url_image=%s
+            UPDATE anime SET titre_original=%s, titre_anglais=%s, score=%s, statut=%s, annee_debut=%s, 
+            annee_fin=%s, nombre_episodes=%s, synopsis=%s, studio=%s, url_image=%s, streaming=%s
             WHERE id=%s
         """
         cursor.execute(query, (
-            data.titre_original, data.titre_anglais, data.score, data.nombre_episodes,
-            data.annee_debut, data.annee_fin, data.nombre_episodes_diffuses, data.studio,
-            data.url_image, anime_id
+            data.titre_original, data.titre_anglais, data.score, data.statut, data.annee_debut, 
+            data.annee_fin, data.nombre_episodes, data.synopsis, data.studio, data.url_image, 
+            data.streaming, anime_id
         ))
         return cursor.rowcount > 0
 

@@ -34,7 +34,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="API Projet Otomo",
-        version="1.0.0",
+        version="0.1.0",
         description="""
     Cette API permet de gérer :
     - Les animés, personnages, studios, genres et citations.

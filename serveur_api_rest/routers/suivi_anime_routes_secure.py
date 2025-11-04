@@ -10,7 +10,7 @@ router = APIRouter(tags=["Suivi des animés (accès sécurisé)"])
 @router.post("/", response_model=SuiviAnimeRead, status_code=status.HTTP_201_CREATED)
 def create(data: SuiviAnimeCreate, user=Depends(require_role(["admin"]))):
     suivi_id = create_suivi(data)
-    return get_suivi(suivi_id)
+    return get_suivi(data.utilisateur, data.anime)
 
 
 ### Récupération de tous les suivis ---

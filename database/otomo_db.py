@@ -72,7 +72,8 @@ def main():
             """
             CREATE TABLE IF NOT EXISTS genre (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                genre VARCHAR(50) NOT NULL
+                genre VARCHAR(50) NOT NULL,
+                url_genre VARCHAR(100) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """,
             # Table voice_actor
@@ -107,6 +108,7 @@ def main():
                 synopsis TEXT NOT NULL,
                 studio INT NOT NULL,
                 url_image VARCHAR(150) NOT NULL,
+                streaming TEXT NULL,
                 FOREIGN KEY (studio) REFERENCES studio(id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """,
@@ -141,7 +143,7 @@ def main():
             """,
             # Table de liaison anime_personnage
             """
-            CREATE TABLE anime_personnage (
+            CREATE TABLE IF NOT EXISTS anime_personnage (
                 personnage_id INT NOT NULL,
                 anime_id INT NOT NULL,
                 PRIMARY KEY (personnage_id, anime_id),
@@ -151,7 +153,7 @@ def main():
             """,
             # Table de liaison perso_voice_actor
             """
-            CREATE TABLE perso_voice_actor (
+            CREATE TABLE IF NOT EXISTS perso_voice_actor (
                 personnage_id INT NOT NULL,
                 voice_actor_id INT NOT NULL,
                 PRIMARY KEY (personnage_id, voice_actor_id),
