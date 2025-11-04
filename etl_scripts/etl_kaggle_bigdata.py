@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import pandas as pd
 import ast
 import mysql.connector
+import json
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -35,6 +36,17 @@ admin_cnx = mysql.connector.connect(
 )
 
 admin_cursor = admin_cnx.cursor()
+
+
+# Chemins relatifs pour les 2 fichiers JSON
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "../data")
+
+streaming_path = os.path.join(DATA_DIR, "streaming_links_all.json")
+genres_path = os.path.join(DATA_DIR, "genres_anime.json")
+
+
+
 
 
 
@@ -165,11 +177,61 @@ unique_studios = sorted(list(all_studios))
 
 
 
-### --- CHARGEMENT ---
-## Table GENRE
-for genre in unique_genres:
+# Chargement du fichier JSON contenant
+# les plateformes des streaming pour chacun des 300 animés sélectionnés
+with open(streaming_path, "r", encoding="utf-8") as f:
+    streaming_data = json.load(f)
+
+
+def get_platforms(anime_id):
+    anime_id_str = str(anime_id)
+    if anime_id_str in streaming_data:
+        platforms = [entry["name"] for entry in streaming_data[anime_id_str]]
+        return platforms if platforms else None
+    return None
+
+# Ajout de la colonne
+df_top["streaming_platforms"] = df_top["anime_id"].apply(get_platforms)
+
+# print(df_top.drop(columns=["end_date", "genres_list", "studios_list"]).iloc[0].to_string())
+# print(df_top[["anime_id", "streaming_platforms"]].head(10))
+
+
+# Chargement du fichier JSON contenant les urls des genres des animés 
+with open(genres_path, "r", encoding="utf-8") as f:
+    genres_json = json.load(f)
+
+# Création d’un mapping genre → url
+genre_url_map = {entry["name"]: entry["url"] for entry in genres_json["data"]}
+
+# Extraire tous les genres uniques
+unique_genres = set()
+for genre_list in df_top["genres_list"]:
+    unique_genres.update(genre_list)
+
+# Liste des genres avec leur URL
+genre_table = []
+
+for genre in sorted(unique_genres):
+    url = genre_url_map.get(genre, None)
+    genre_table.append({
+        "name": genre,
+        "url": url
+    })
+
+# Conversion en DataFrame
+df_genres = pd.DataFrame(genre_table)
+# print(df_genres)
+
+
+
+
+
+## --- CHARGEMENT ---
+# Table GENRE
+for genre, url in df_genres[["name", "url"]].itertuples(index=False):
     admin_cursor.execute(
-        "INSERT INTO genre (genre) VALUES (%s)", (genre,)
+        "INSERT INTO genre (genre, url_genre) VALUES (%s, %s)", (genre, url)
     )
 
 ## Table STUDIO
@@ -198,7 +260,8 @@ df_top["studio_id"] = df_top["studio_id"].astype('Int64')
 
 anime = df_top[[
     'anime_id','title', 'status','episodes', 'start_year', 'synopsis',
-    'main_picture', 'title_english', 'end_year', 'studio_id', 'score'
+    'main_picture', 'title_english', 'end_year', 'studio_id', 'score',
+    'streaming_platforms'
     ]]
 
 for row in anime.itertuples(index=False):
@@ -214,18 +277,26 @@ for row in anime.itertuples(index=False):
     studio = int(row.studio_id) if not pd.isna(row.studio_id) else None
     url_image = str(row.main_picture) if row.main_picture else None
 
+    # Conversion des listes python en chaîne lisible
+    streaming = (
+    ", ".join(row.streaming_platforms)
+    if row.streaming_platforms
+    else None
+)
+
+
     admin_cursor.execute(
         """
         INSERT INTO anime (
             anime_id, titre_original, titre_anglais, statut, score,
             annee_debut, annee_fin, nombre_episodes, synopsis,
-            studio, url_image
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            studio, url_image, streaming
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (
             anime_id, titre_original, titre_anglais, statut, score,
             annee_debut, annee_fin, nombre_episodes, synopsis,
-            studio, url_image
+            studio, url_image, streaming
         )
     )
 

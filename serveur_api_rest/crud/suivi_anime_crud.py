@@ -31,5 +31,5 @@ def update_suivi(utilisateur_id, anime_id, data):
 ### --- DELETE ---
 def delete_suivi(utilisateur_id, anime_id):
     with get_db_cursor() as cursor:
-        cursor.execute("DELETE FROM suivi_anime utilisateur = %s AND anime = %s", (utilisateur_id, anime_id))
+        cursor.execute("DELETE FROM suivi_anime WHERE utilisateur = %s AND anime = %s", (utilisateur_id, anime_id))
         return cursor.rowcount > 0

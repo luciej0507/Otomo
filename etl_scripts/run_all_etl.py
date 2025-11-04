@@ -14,4 +14,4 @@ for script in scripts:
     print(f"Running {script_path} ...")
     subprocess.run(["python", script_path], check=True)
 
-print("\nTous les scripts ETL ont été exécutés avec succès !")
+print("\nTous les scripts ont été exécutés avec succès !")

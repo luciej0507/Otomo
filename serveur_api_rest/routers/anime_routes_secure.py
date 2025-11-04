@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from serveur_api_rest.schemas.anime_schemas import AnimeCreate, AnimeRead
+from serveur_api_rest.schemas.anime_schemas import AnimeCreate, AnimeRead, AnimeUpdate
 from serveur_api_rest.crud.anime_crud import create_anime, get_anime, update_anime, delete_anime
 from serveur_api_rest.auth import require_role
 
@@ -27,7 +27,7 @@ def create(data: AnimeCreate, user=Depends(require_role(["admin"]))):
 
 ### --- Mise à jour d'un animé ---
 @router.put("/{anime_id}", response_model=bool)
-def update(anime_id: int, data: AnimeCreate, user=Depends(require_role(["admin", "contributeur"]))):
+def update(anime_id: int, data: AnimeUpdate, user=Depends(require_role(["admin"]))):
     return update_anime(anime_id, data)
 
 
