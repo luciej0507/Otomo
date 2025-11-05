@@ -22,27 +22,27 @@ def get_connection():
             database=DB_NAME,   
             charset="utf8mb4",
             autocommit=False,
-            pool_name="otomo_pool",     # Active le pooling
-            pool_size=10,                # 5 connexions réutilisables
-            pool_reset_session=True     # Nettoie les connexions
+            pool_name="otomo_pool",     # active le pooling (pour réutiliser les connexions)
+            pool_size=10,               # jusqu'à 10 connexions réutilisables en même temps
+            pool_reset_session=True     # nettoie la session avant de réutiliser la connexion du pool
         )
         return connection
     except Error as e:
         print("Erreur de connexion MySQL:", e)
         return None
 
-@contextmanager
+@contextmanager             # garantit qu'une ressource sera toujours nettoyée après utilisation
 def get_db_cursor(dictionary=False):
     conn = get_connection()
     cursor = None
     try:
         cursor = conn.cursor(dictionary=dictionary)
         yield cursor
-        conn.commit()       # Commit automatique
+        conn.commit()       # commit automatique
     except Exception:
-        conn.rollback()     # Annule en cas d'erreur
+        conn.rollback()     # annule en cas d'erreur
         raise
-    finally:
+    finally:                # ferme proprement les durseur et la connexion quoiqu'il arrive
         if cursor:
             cursor.close()
         if conn:

@@ -6,6 +6,7 @@ from serveur_api_rest.routers import (
     suivi_anime_routes, suivi_anime_routes_secure, auth_routes
 )
 
+# Point d'entrée
 app = FastAPI()
 
 # Inclusion des routes
@@ -23,16 +24,16 @@ app.include_router(suivi_anime_routes.router, prefix="/suivi")
 app.include_router(suivi_anime_routes_secure.router, prefix="/suivi_secure")
 
 
-# Route racine (route default masqué)
+# Route racine (route default masqué dans Swagger)
 @app.get("/", include_in_schema=False)
 def root():
     return {"message": "Bienvenue sur l'API du Projet Otomo"}
 
-
+# Personnalisation de la documentation OpenAPI
 def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(
+    if app.openapi_schema:          # si le schéma OpenAPI est déjà généré
+        return app.openapi_schema   # on le retourne directement
+    openapi_schema = get_openapi(   # on crée un schéma OpenAPI personnalisé
         title="API Projet Otomo",
         version="0.1.0",
         description="""
@@ -45,7 +46,7 @@ def custom_openapi():
     """,
         routes=app.routes,
     )
-    openapi_schema["components"]["securitySchemes"] = {
+    openapi_schema["components"]["securitySchemes"] = {     # permet d'utiliser le bouton Authorize pour tester les routes sécurisées
         "HTTPBearer": {
             "type": "http",
             "scheme": "bearer",
@@ -55,4 +56,5 @@ def custom_openapi():
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
+# Activation du schéma personnalisé
 app.openapi = custom_openapi

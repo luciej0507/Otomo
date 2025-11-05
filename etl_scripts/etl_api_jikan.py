@@ -51,28 +51,28 @@ for doc in collection.find():
     # on ne garde que les roles "Main" et "Supporting"
     mains = [char for char in characters if char.get("role") == "Main"]
     supportings = [char for char in characters if char.get("role") == "Supporting"]
-    # Tri des personnages secondaires par popularité décroissante
+    # Tri des personnages secondaires des plus populaires au moins populaires
     supportings_sorted = sorted(
         supportings,
-        key=lambda x: x.get("favorites", 0),
-        reverse=True
+        key=lambda x: x.get("favorites", 0),    # Pour chaque personnage, on récupère la valeur associée à la clé "favorites"
+        reverse=True                            # on trie en ordre décroissant = les personnages les plus populaires en premier
     )
     # on garde les 5 premiers
     sampled_supportings = supportings_sorted[:5]
 
-    selected_chars = mains + sampled_supportings
+    selected_chars = mains + sampled_supportings    # on combine 2 listes pour avoir les personnages à traiter
 
-    for char in selected_chars:
-        char_info = char.get("character", {})
-        char_name = char_info.get("name")
+    for char in selected_chars:                     # on parcourt chaque personnage de la liste
+        char_info = char.get("character", {})       # on récupère les infos du personnage
+        char_name = char_info.get("name")           # on extrait son nom
 
-        for va in char.get("voice_actors", []):
-            if va.get("language") == "Japanese": # seuls les doubleurs japonais sont conservés
-                va_info = va.get("person", {})
-                va_name = va_info.get("name")
-                va_url = va_info.get("url")
+        for va in char.get("voice_actors", []):     # on parcourt la liste des doubleurs
+            if va.get("language") == "Japanese":    # seuls les doubleurs japonais sont conservés
+                va_info = va.get("person", {})      # on récupère les infos du doubleur
+                va_name = va_info.get("name")       # son nom
+                va_url = va_info.get("url")         # l'url de son profil MyAnimeList
 
-                results.append({
+                results.append({                    # on ajoute un dict dans le liste results
                     "anime_id": anime_id,
                     "character": char_name,
                     "role": char.get("role"),
