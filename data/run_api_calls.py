@@ -1,11 +1,10 @@
 import subprocess
 import os
 
+# Pour les 300 animés sélectionnés
 scripts = [
-    "create_users_sqlite.py",
-    "kaggle_to_mongo.py",
-    "webscraping.py",
-    "webapi_to_mongo.py"
+    "webapi_to_mongo.py",       # récupérer les personnages et doubleurs + ajout dans la base mongdb (collection "characters")
+    "streaming_links_jikan.py"  # récupérer les plateformes de streaming
 ]
 
 for script in scripts:
